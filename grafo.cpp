@@ -28,6 +28,7 @@ public:
     void addEdge(int id1, int id2)
     {
         // Encontrar os vértices correspondentes na lista de vértices
+        // dado o Id se procura o vértice correspondente na lista de vértices
         auto it1 = find_if(vertices.begin(), vertices.end(), [id1](const Vertex &v)
                            { return v.id == id1; });
         auto it2 = find_if(vertices.begin(), vertices.end(), [id2](const Vertex &v)
@@ -61,14 +62,15 @@ public:
 
     // Contar os ciclos no grafo
     int countCycles()
-    {
+    {   
         int count = 0;
-        vector<int> path;
-        vector<bool> visited(vertices.size(), false);
-        int numVertices = static_cast<int>(vertices.size());
+        vector<int> path; // Lista de vértices que representa o caminho
+        vector<bool> visited(vertices.size(), false); // Lista de vértices ja vizitados 
+        int numVertices = static_cast<int>(vertices.size()); // Quantos vertices tem no grafo
         for (int i = 0; i < numVertices; i++)
         {
-
+            // nesse loop começa a busca por ciclos apartir de cada vértice
+            // Ao mesmo tempo para cada ciclo achado é adicionado ao contador
             path.push_back(vertices[i].id);
             visited[i] = true;
             count += countCyclesUtil(i, i, path, visited);
@@ -76,7 +78,7 @@ public:
             visited[i] = false;
         }
 
-        return count; // Como cada ciclo é contado duas vezes, dividimos por 2 para obter o número correto de ciclos
+        return count;
     }
 
 private:
@@ -88,28 +90,29 @@ private:
         for (int neighborId : vertices[current].neighbors)
         {
 
-            // Encontrar o índice do vizinho em 'vertices'
+            // Encontrar o índice do vizinho apartir do ID na lista de vértices
             auto it = find_if(vertices.begin(), vertices.end(), [neighborId](const Vertex &v)
                               { return v.id == neighborId; });
+
             if (it != vertices.end())
             {
                 int neighborIndex = distance(vertices.begin(), it); // Obtém o índice do vizinho
-                if (neighborIndex == start)
+                if (neighborIndex == start) // achou ciclo
                 {
 
-                    if (path.size() > 2)
+                    if (path.size() > 2) // nao contar ciclos com apenas 2 vértices
                     {
                     count++;
                     }
                     continue;
                 }
 
-                if (!visited[neighborIndex])
+                if (!visited[neighborIndex]) // procura caminhos nao vizitados
                 {
                     path.push_back(vertices[neighborIndex].id);
                     visited[neighborIndex] = true;
 
-                    count += countCyclesUtil(start, neighborIndex, path, visited);
+                    count += countCyclesUtil(start, neighborIndex, path, visited); // chamada recursiva para continuar o caminho
                     path.pop_back();
                     visited[neighborIndex] = false;
                 }
