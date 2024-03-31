@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <chrono>
 
 using namespace std;
 
@@ -46,6 +47,24 @@ public:
         }
     }
 
+    void generateCompleteGraph(int n)
+    {
+        // Adiciona n vértices ao grafo
+        for (int i = 1; i <= n; i++)
+        {
+            addVertex(i);
+        }
+
+        // Adiciona arestas entre todos os pares de vértices distintos
+        for (int i = 1; i <= n; i++)
+        {
+            for (int j = i + 1; j <= n; j++)
+            {
+                addEdge(i, j);
+            }
+        }
+    }
+
     // Exibir o grafo
     void display()
     {
@@ -62,10 +81,10 @@ public:
 
     // Contar os ciclos no grafo
     int countCycles()
-    {   
+    {
         int count = 0;
-        vector<int> path; // Lista de vértices que representa o caminho
-        vector<bool> visited(vertices.size(), false); // Lista de vértices ja vizitados 
+        vector<int> path;                                    // Lista de vértices que representa o caminho
+        vector<bool> visited(vertices.size(), false);        // Lista de vértices ja vizitados
         int numVertices = static_cast<int>(vertices.size()); // Quantos vertices tem no grafo
         for (int i = 0; i < numVertices; i++)
         {
@@ -86,7 +105,6 @@ private:
     {
         int count = 0;
 
-
         for (int neighborId : vertices[current].neighbors)
         {
 
@@ -97,12 +115,12 @@ private:
             if (it != vertices.end())
             {
                 int neighborIndex = distance(vertices.begin(), it); // Obtém o índice do vizinho
-                if (neighborIndex == start) // achou ciclo
+                if (neighborIndex == start)                         // achou ciclo
                 {
 
                     if (path.size() > 2) // nao contar ciclos com apenas 2 vértices
                     {
-                    count++;
+                        count++;
                     }
                     continue;
                 }
@@ -125,58 +143,72 @@ private:
 
 int main()
 {
-    Graph graph;
+    int n;
+    cout << "Digite o valor de n para gerar o grafo completo K_n: ";
+    cin >> n;
+    Graph completeGraph;
+    completeGraph.generateCompleteGraph(n);
+    std::chrono::system_clock::time_point inicio;
+    std::chrono::system_clock::time_point fim;
+
+    inicio = std::chrono::system_clock::now();
 
     // Adicionando vértices
-  /* grafo do pdf
-    graph.addVertex(1);
-    graph.addVertex(2);
-    graph.addVertex(3);
-    graph.addVertex(4);
-    graph.addVertex(5);
-    graph.addVertex(6);
+    /* grafo do pdf
+      graph.addVertex(1);
+      graph.addVertex(2);
+      graph.addVertex(3);
+      graph.addVertex(4);
+      graph.addVertex(5);
+      graph.addVertex(6);
 
-    // Adicionando arestas
-    graph.addEdge(1, 4);
-    graph.addEdge(4, 2);
-    graph.addEdge(4, 3);
-    graph.addEdge(6, 4);
-    graph.addEdge(2, 3);
-    graph.addEdge(1, 2);
-    graph.addEdge(1, 5);
-    graph.addEdge(2, 5);
-    graph.addEdge(5, 6);
-    graph.addEdge(3, 5);
-    graph.addEdge(3, 6);
+      // Adicionando arestas
+      graph.addEdge(1, 4);
+      graph.addEdge(4, 2);
+      graph.addEdge(4, 3);
+      graph.addEdge(6, 4);
+      graph.addEdge(2, 3);
+      graph.addEdge(1, 2);
+      graph.addEdge(1, 5);
+      graph.addEdge(2, 5);
+      graph.addEdge(5, 6);
+      graph.addEdge(3, 5);
+      graph.addEdge(3, 6);
 
-  */
+    */
 
- // k5
-    graph.addVertex(1);
-    graph.addVertex(2);
-    graph.addVertex(3);
-    graph.addVertex(4);
-    graph.addVertex(5);
+    // k5
+    /*
+       graph.addVertex(1);
+       graph.addVertex(2);
+       graph.addVertex(3);
+       graph.addVertex(4);
+       graph.addVertex(5);
 
-    // Adicionando arestas
-    graph.addEdge(1, 2);
-    graph.addEdge(1, 3);
-    graph.addEdge(1, 4);
-    graph.addEdge(1, 5);
-    graph.addEdge(2, 3);
-    graph.addEdge(2, 5);
-    graph.addEdge(2, 4);
-    graph.addEdge(3, 4);
-    graph.addEdge(3, 5);
-    graph.addEdge(4, 5);
+       // Adicionando arestas
+       graph.addEdge(1, 2);
+       graph.addEdge(1, 3);
+       graph.addEdge(1, 4);
+       graph.addEdge(1, 5);
+       graph.addEdge(2, 3);
+       graph.addEdge(2, 5);
+       graph.addEdge(2, 4);
+       graph.addEdge(3, 4);
+       graph.addEdge(3, 5);
+       graph.addEdge(4, 5);
+   */
 
     // Exibindo o grafo
     cout << "Grafo nao direcionado e nao ponderado:" << endl;
-    graph.display();
+    completeGraph.display();
 
     // Contando os ciclos
-    int cycleCount = graph.countCycles();
+    int cycleCount = completeGraph.countCycles();
     cout << "Numero de ciclos no grafo: " << cycleCount << endl;
+    fim = std::chrono::system_clock::now();
 
+    double tempofinal = std::chrono::duration_cast<std::chrono::milliseconds>(fim - inicio).count() / 1000.0; // Convertendo para segundos
+
+    cout << "Tempo de execucao: " << tempofinal << " segundos" << endl;
     return 0;
 }
