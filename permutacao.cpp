@@ -79,75 +79,87 @@ public:
     }
 
     int permutacao()
-{
-    int count = 0;
-    vector<int> vertexIds;
-    for (const auto &vertex : vertices)
     {
-        vertexIds.push_back(vertex.id);
-    }
-
-    // Sort the vertex IDs in ascending order
-    sort(vertexIds.begin(), vertexIds.end());
-
-
-    for (int vertexId : vertexIds)
-    {
-        cout << vertexId << " ";
-    }
-    cout << endl;
-    cout << endl;
-    
-    // Loop through all possible cycle lengths from 3 to vertexIds.size()
-    for (int cycleLength = 3; cycleLength <= vertices.size(); cycleLength++)
-    {
-        do
+        int count = 0;
+        vector<int> vertexIds;
+        for (const auto &vertex : vertices)
         {
-            // Generate a permutation of the vertex IDs
-            vector<int> permutation(vertexIds.begin(), vertexIds.begin() + cycleLength);
-            
-            
-            // Check if the permutation forms a cycle
-            bool isCycle = true;
-            for (int i = 0; i < cycleLength; i++)
-            {
-                int current = permutation[i];
-                int next = permutation[(i + 1) % cycleLength];
+            vertexIds.push_back(vertex.id);
+        }
 
-                auto it = find(vertices[current - 1].neighbors.begin(), vertices[current - 1].neighbors.end(), next);
+        // Sort the vertex IDs in ascending order
+        sort(vertexIds.begin(), vertexIds.end());
 
-                if (it == vertices[current - 1].neighbors.end())
-                {
-                    isCycle = false;
-                    break;
-                }
-            }
+        for (int vertexId : vertexIds)
+        {
+            cout << vertexId << " ";
+        }
+        cout << endl;
+        cout << endl;
 
-            if (isCycle)
+        // Loop through all possible cycle lengths from 3 to vertexIds.size()
+        for (int cycleLength = 3; cycleLength <= vertices.size(); cycleLength++)
+        {
+            vector<int> permutationAnterior = {0, 0, 0};
+
+            do
             {
-                for (int vertexId : permutation)
+                // Generate a permutation of the vertex IDs
+                vector<int> permutation(vertexIds.begin(), vertexIds.begin() + cycleLength);
+
+                // Check if the permutation forms a cycle
+                bool isCycle = true;
+                for (int i = 0; i < cycleLength; i++)
                 {
-                    cout << vertexId << " ";
+                    int current = permutation[i];
+                    int next = permutation[(i + 1) % cycleLength];
+
+                    auto it = find(vertices[current - 1].neighbors.begin(), vertices[current - 1].neighbors.end(), next);
+
+                    if (it == vertices[current - 1].neighbors.end())
+                    {
+                        isCycle = false;
+                        break;
+                    }
                 }
-                cout << endl;
-                count++;
-            }
-            if (vertices.size() - cycleLength >= 2)
-            {
-                for (int i = 0; i < vertices.size() -4; i++)
+
+                if (isCycle)
                 {
-                    next_permutation(vertexIds.begin(), vertexIds.end())   ;   
+                    if (!Iguais(permutation, permutationAnterior))
+                    {
+                        for (int vertexId : permutation)
+                        {
+                          //  cout << vertexId << " ";
+                        }
+                   //     cout << endl;
+                        count++;
+                    }
+                    
                 }
-                
-                      }
-            
-        } while (next_permutation(vertexIds.begin(), vertexIds.end()));
+                permutationAnterior = permutation;
+
+            } while (next_permutation(vertexIds.begin(), vertexIds.end()));
+        }
+
+        return count;
     }
 
-    return count;
-}
+    bool Iguais(const vector<int> &vec1, const vector<int> &vec2)
+    {
+        if (vec1.size() != vec2.size())
+        {
+            return false;
+        }
+        for (int i = 0; i < vec1.size(); i++)
+        {
+            if (vec1[i] != vec2[i])
+            {
+                return false;
+            }
+        }
 
-
+        return true;
+    }
 };
 
 int main()
